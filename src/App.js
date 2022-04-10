@@ -1,23 +1,28 @@
-import logo from './logo.svg';
+import { getAuth } from "firebase/auth";
 import './App.css';
-
+import app from './firebase.init';
+// this is the import files section and the end line.  
+const auth = getAuth(app); 
+const handleOnBlur = (e) => {
+  console.log(e.target.value);
+}
+const subMit = event => {
+  event.preventDefault();
+}
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+      <form onSubmit={subMit}>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          <input type="email" name="email" id="email" placeholder="Please give your email..." onBlur={handleOnBlur}/>
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <p>
+          <input type="password" name="password" id="password" placeholder="Input a strong password....." onBlur={handleOnBlur}/>
+        </p>
+        <p>
+          <input type="submit" value="Submit"  className="submit"/>
+        </p>
+      </form>
     </div>
   );
 }
