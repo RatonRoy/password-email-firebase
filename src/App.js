@@ -1,23 +1,43 @@
-import { getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword,  createUserWithEmailAndPassword} from "firebase/auth";
 import './App.css';
+import React, { useState } from 'react';
 import app from './firebase.init';
 // this is the import files section and the end line.  
 const auth = getAuth(app); 
-const handleOnBlur = (e) => {
-  console.log(e.target.value);
-}
-const subMit = event => {
-  event.preventDefault();
-}
 function App() {
+  const [email, setEmail] = useState(' ');
+  const [password, setPassword] = useState(' ');
+
+  const handleOnBlurEmail = (e) => {
+    setEmail(e.target.value);
+  }
+  const handleOnBlurPassword = (e) => {
+    setPassword(e.target.value);
+  } 
+
+  const handleFromSubmit = event => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(res => {
+        const user = res.user;
+        console.log(user);
+      })
+      .catch(error => {
+        console.error(error);
+    })
+    event.preventDefault();
+    console.log('the user Information ', email, password)
+  }
   return (
     <div className="App">
-      <form onSubmit={subMit}>
+      <form onSubmit={handleFromSubmit}>
         <p>
-          <input type="email" name="email" id="email" placeholder="Please give your email..." onBlur={handleOnBlur}/>
+          <label> Email: </label> 
+          <input type="email" name="email" id="email" placeholder="Please give your email..." onBlur={handleOnBlurEmail}/>
         </p>
         <p>
-          <input type="password" name="password" id="password" placeholder="Input a strong password....." onBlur={handleOnBlur}/>
+          <label>Password : </label> 
+
+          <input type="password" name="password" id="password" placeholder="Input a strong password....." onBlur={handleOnBlurPassword}/>
         </p>
         <p>
           <input type="submit" value="Submit"  className="submit"/>
