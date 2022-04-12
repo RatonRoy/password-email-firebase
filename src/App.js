@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, updateProfile } from "firebase/auth";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import { Button, Form, NavLink } from "react-bootstrap";
 const auth = getAuth(app);
 function App() {
   const [email, setEmail] = useState(' ');
+  const [name, setName] = useState(''); 
   const [registered, setRegister] = useState(false);
   const [password, setPassword] = useState(' ');
   const [validated, setValidated] = useState(false);
@@ -15,6 +16,9 @@ function App() {
 
   const handleOnBlurEmail = (e) => {
     setEmail(e.target.value);
+  }
+  const handleNameBlur = (e) => {
+    setName(e.target.value);
   }
   const handleOnBlurPassword = (e) => {
     setPassword(e.target.value);
@@ -28,6 +32,17 @@ function App() {
       .then(() => {
         console.log('email sent');
       })
+  }
+  const setUserName = () =>{
+    updateProfile(auth.currentUser, {
+      displayName: name
+    })
+    .then(() =>{
+      console.log('updating name');
+    })
+    .catch(error =>{
+      setError(error.message);
+    })
   }
   const emailVerification = () => {
     const auth = getAuth();
@@ -69,12 +84,13 @@ function App() {
           setEmail('');
           emailVerification();
           setPassword('');
+          setUserName();
         })
         .catch(error => {
           console.error(error);
           setError(error.message);
         })
-        
+
       event.preventDefault();
       console.log('the user Information ', email, password)
 
@@ -99,6 +115,13 @@ function App() {
       </form> */}
       <h2 className="text-primary mb-3"> Please  {registered ? "Login" : "Register"} </h2>
       <Form className="mt-5" onSubmit={handleFromSubmit} noValidate validated={validated}>
+        {!registered && <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Label>Your Name</Form.Label>
+          <Form.Control onBlur={handleNameBlur} type="text" placeholder="Your Name" required />
+          <Form.Control.Feedback type="invalid">
+            Please provide your name.
+          </Form.Control.Feedback>
+        </Form.Group>}
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email Address</Form.Label>
           <Form.Control type="email" placeholder="Enter email" onBlur={handleOnBlurEmail} required />
@@ -108,16 +131,16 @@ function App() {
           <Form.Control type="password" placeholder="Password" onBlur={handleOnBlurPassword} required />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Already Registered ?" onChange ={handelChangeRegister} />
+          <Form.Check type="checkbox" label="Already Registered ?" onChange={handelChangeRegister} />
         </Form.Group>
         <p className="text-danger">{error}</p>
         <Button variant="primary" type="submit">
           {registered ? "LogIn" : "Register"}
         </Button>
-        <Button  type="" variant="link" onClick={handleForgotPass}>
-           Forgot Password  ?
+        <Button type="" variant="link" onClick={handleForgotPass}>
+          Forgot Password  ?
         </Button>
-        
+
       </Form>
     </div>
   );
